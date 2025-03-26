@@ -1,0 +1,67 @@
+---
+import "../styles/post-style.css";
+
+import MaxWidthWrapper from "../components/MaxWidthWrapper.astro";
+const { frontmatter } = Astro.props;
+import type { MarkdownLayoutProps } from "astro";
+import Navigation from "../components/Navigation.astro";
+import Graph from "../components/Graph.astro";
+
+type Props = MarkdownLayoutProps<{
+  title: string;
+  author: string;
+  date: string;
+  description: string;
+}>;
+---
+
+<html>
+  <head>
+    <!-- ... -->
+    <meta charset="utf-8" />
+  </head>
+  <!-- ... -->
+  <body>
+    <Navigation />
+    <MaxWidthWrapper className="flex h-fit">
+      <header id="blog-header" class="flex-5/12 pt-12 sticky h-fit top-14">
+        <p class="font-bold text-5xl pb-4">{frontmatter.title}</p>
+        <div class="flex flex-row overflow-auto">
+          <div class="w-full flex items-center justify-center mb-2">
+            <Graph className="w-full" />
+          </div>
+        </div>
+        <div class="pb-4 pr-16">
+          <p>
+            {frontmatter.description}
+          </p>
+        </div>
+      </header>
+      <div
+        id="markdown-content"
+        class="flex-7/12 flex flex-col gap-4 pt-12 pb-12 prose prose-lg"
+      >
+        <slot />
+        <!-- Markdown content is injected here -->
+        <!-- ... -->
+      </div>
+    </MaxWidthWrapper>
+  </body>
+</html>
+
+<script>
+  const content = document.getElementById("markdown-content");
+
+  // 모든 h2 태그를 감싸는 div 추가
+  const headings = content.querySelectorAll("h2");
+
+  headings.forEach((heading) => {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("heading-wrapper");
+
+    heading.parentNode.insertBefore(wrapper, heading);
+    wrapper.appendChild(heading);
+
+    // 이후 관련된 내용도 포함 가능
+  });
+</script>

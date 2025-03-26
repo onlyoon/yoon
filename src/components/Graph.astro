@@ -1,0 +1,120 @@
+---
+import "../styles/global.css";
+
+const { className } = Astro.props;
+---
+
+<div id="graph" class={className}></div>
+
+<script src="https://unpkg.com/d3/dist/d3.min.js"></script>
+
+<script>
+  const graphData = {
+    nodes: [
+      { id: "note1", label: "Note 1" },
+      { id: "note2", label: "Note 2" },
+      { id: "note3", label: "Note 3" },
+      { id: "note4", label: "Note 4" }
+    ],
+    links: [
+      { source: "note1", target: "note2" },
+      { source: "note2", target: "note3" },
+      { source: "note3", target: "note1" },
+      { source: "note4", target: "note1" }
+    ]
+  };
+  import * as d3 from "d3";
+
+  const width = "300";
+  const height = "300";
+
+  const svg = d3
+    .select("#graph")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  // 시뮬레이션 설정
+  const simulation = d3
+    .forceSimulation(graphData.nodes)
+    .force(
+      "link",
+      d3
+        .forceLink(graphData.links)
+        .id((d) => d.id)
+        .distance(150)
+    )
+    .force("charge", d3.forceManyBody().strength(-300))
+    .force("center", d3.forceCenter(width / 2, height / 2));
+
+  // 링크(엣지) 추가
+  const link = svg
+    .append("g")
+    .selectAll("line")
+    .data(graphData.links)
+    .enter()
+    .append("line")
+    .attr("stroke-width", 2)
+    .attr("stroke", "#999");
+
+  // 노드 추가
+  const node = svg
+    .append("g")
+    .selectAll("circle")
+    .data(graphData.nodes)
+    .enter()
+    .append("circle")
+    .attr("r", 10)
+    .attr("fill", "#69b3a2")
+    .call(drag(simulation));
+
+  // 노드 레이블 추가
+  const labels = svg
+    .append("g")
+    .selectAll("text")
+    .data(graphData.nodes)
+    .enter()
+    .append("text")
+    .text((d) => d.label)
+    .attr("x", 12)
+    .attr("y", ".31em");
+
+  // 드래그 기능 추가
+  function drag(simulation) {
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+
+    return d3
+      .drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended);
+  }
+
+  // 시뮬레이션 업데이트
+  simulation.on("tick", () => {
+    link
+      .attr("x1", (d) => d.source.x)
+      .attr("y1", (d) => d.source.y)
+      .attr("x2", (d) => d.target.x)
+      .attr("y2", (d) => d.target.y);
+
+    node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+
+    // labels.attr("x", (d) => d.x + 12).attr("y", (d) => d.y + ".31em");
+  });
+</script>

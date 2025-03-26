@@ -1,0 +1,9 @@
+---
+import "../styles/global.css";
+
+const { text, link } = Astro.props;
+---
+
+<a href=`${link}`>
+  <button class="w-full h-14 bg-black rounded-3xl text-white">{text}</button>
+</a>
