@@ -1,0 +1,168 @@
+---
+import "../styles/global.css";
+
+export interface Props {
+  // style: Record<string, string>;
+  cursor: boolean;
+  deletingInterval: number;
+  emptyPause: number;
+  eraseMode: "erase" | "overwrite";
+  items: string[];
+  pause: number;
+  typingInterval: number;
+}
+
+const {
+  // style = {},
+  cursor = true,
+  deletingInterval = 50,
+  emptyPause = 1000,
+  eraseMode = "erase",
+  items = ["first", "second", "third"],
+  pause = 1500,
+  typingInterval = 50
+} = Astro.props;
+---
+
+<rotating-text
+  data-items={JSON.stringify(items)}
+  data-cursor={cursor}
+  data-deleting-interval={deletingInterval}
+  data-empty-pause={emptyPause}
+  data-erase-mode={eraseMode}
+  data-pause={pause}
+  data-typing-interval={typingInterval}
+>
+  <span class="output font-bold"></span>{
+    cursor && <span class="cursor hg">|</span>
+  }
+</rotating-text>
+
+<script>
+  class RotatingText extends HTMLElement {
+    private output: HTMLElement;
+    private items: string[];
+    private cursor: boolean;
+    private deletingInterval: number;
+    private emptyPause: number;
+    private eraseMode: "erase" | "overwrite";
+    private pause: number;
+    private typingInterval: number;
+    private index: number;
+    private substrLength: number;
+
+    constructor() {
+      super();
+      this.output = this.querySelector(".output") as HTMLElement;
+      this.items = JSON.parse(this.dataset.items || `[]`);
+      this.cursor = this.dataset.cursor === "true";
+      this.deletingInterval = parseInt(this.dataset.deletingInterval || "50");
+      this.emptyPause = parseInt(this.dataset.emptyPause || "1000");
+      this.eraseMode = (this.dataset.eraseMode || "erase") as "erase";
+      this.pause = parseInt(this.dataset.pause || "1500");
+      this.typingInterval = parseInt(this.dataset.typingInterval || "50");
+      this.index = 0;
+      this.substrLength = 0;
+    }
+
+    connectedCallback() {
+      this.textAnimation();
+    }
+
+    textAnimation() {
+      this.type(this.items[this.index], () => {
+        setTimeout(() => {
+          if (this.eraseMode === "erase") {
+            this.erase(() => {
+              this.nextWord();
+            });
+          } else {
+            // this.overwrite(
+            //   this.items[(this.index + 1) % this.items.length],
+            //   () => {
+            //     this.nextWord();
+            //   }
+            // );
+          }
+        }, this.pause);
+      });
+    }
+
+    type(text: string, callback: Function) {
+      const typeNextChar = () => {
+        if (this.output.textContent!.length < text.length) {
+          this.output.textContent = text.substr(
+            0,
+            this.output.textContent!.length + 1
+          );
+          setTimeout(typeNextChar, this.typingInterval);
+        } else {
+          callback();
+        }
+      };
+      typeNextChar();
+    }
+
+    erase(callback: Function) {
+      const eraseNextChar = () => {
+        if (this.output.textContent!.length > 0) {
+          this.output.textContent = this.output.textContent!.substr(
+            0,
+            this.output.textContent!.length - 1
+          );
+          setTimeout(eraseNextChar, this.deletingInterval);
+        } else {
+          callback();
+        }
+      };
+      eraseNextChar();
+    }
+
+    overwrite(text: string, callback: Function) {
+      const overwriteNextChar = () => {
+        if (this.substrLength < text.length) {
+          this.output.textContent =
+            text.substr(0, this.substrLength) +
+            this.output.textContent!.substr(this.substrLength);
+          this.substrLength++;
+          setTimeout(overwriteNextChar, this.deletingInterval);
+        } else {
+          this.output.textContent = text;
+          this.substrLength = 0;
+          callback();
+        }
+      };
+      overwriteNextChar();
+    }
+
+    nextWord() {
+      this.index = (this.index + 1) % this.items.length;
+      setTimeout(() => this.textAnimation(), this.emptyPause);
+    }
+  }
+
+  if (!customElements.get("rotating-text")) {
+    customElements.define("rotating-text", RotatingText);
+  }
+</script>
+
+<style>
+  rotating-text {
+    display: inline-block;
+  }
+  .cursor {
+    animation: blink 0.7s infinite;
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+</style>

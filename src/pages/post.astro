@@ -1,0 +1,18 @@
+---
+import Navigation from "../components/Navigation.astro";
+import MaxWidthWrapper from "../components/MaxWidthWrapper.astro";
+import Layout from "../layouts/Layout.astro";
+
+// import * as post1 from "../blog-contents/post-1.md";
+const posts = Object.values(
+  await import.meta.glob("../blog-contents/*.md", { eager: true })
+);
+---
+
+<Layout>
+  <Navigation />
+  <MaxWidthWrapper>
+    <p>Post</p>
+    <ul></ul>
+  </MaxWidthWrapper>
+</Layout>

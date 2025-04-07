@@ -1,0 +1,72 @@
+<!-- ---
+// Bio.astro
+
+const author = {
+  name: "홍길동",
+  bio: {
+    description: [
+      "웹 개발자",
+      "UI/UX 디자이너",
+      "오픈소스 기여자",
+      "기술 블로거"
+    ],
+    role: "풀스택 엔지니어",
+    thumbnail: "/images/profile-photo.jpg"
+  },
+  social: [
+    { platform: "GitHub", url: "https://github.com/honggildong" },
+    { platform: "Twitter", url: "https://twitter.com/honggildong" },
+    { platform: "LinkedIn", url: "https://linkedin.com/in/honggildong" },
+    { platform: "Blog", url: "https://honggildong.dev" }
+  ]
+};
+const { language = 'ko' } = Astro.props;
+const { bio, social, name } = author;
+---
+
+<div class="bio">
+  {language === 'ko' ? (
+    <div class="introduction korean">
+      <p class="title">
+        안녕하세요.
+        <br />
+        <span class="rotating-text" data-items={JSON.stringify(bio.description)}></span>
+        <br />
+        {bio.role} <strong>{name}</strong>입니다.
+        <br />
+      </p>
+      <!-- 나머지 코드 -->)
+: (
+<!-- 영어 버전 코드 -->
+)}
+
+<script>
+  class RotatingText extends HTMLElement {
+    constructor(el: HTMLElement) {
+      super();
+      const items = JSON.parse(el.dataset.items || "[]");
+      let currentIndex = 0;
+
+      const updateText = () => {
+        this.textContent = items[currentIndex];
+        currentIndex = (currentIndex + 1) % items.length;
+      };
+
+      updateText();
+      setInterval(updateText, 2000);
+    }
+  }
+
+  customElements.define("rotating-text", RotatingText);
+
+  document.querySelectorAll(".rotating-text").forEach((el) => {
+    new RotatingText(el as HTMLElement);
+  });
+</script>
+
+<style>
+  .rotating-text {
+    display: inline-block;
+    min-width: 100px;
+  }
+</style> -->

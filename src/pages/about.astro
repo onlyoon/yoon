@@ -1,0 +1,173 @@
+---
+import Navigation from "../components/Navigation.astro";
+import MaxWidthWrapper from "../components/MaxWidthWrapper.astro";
+import Layout from "../layouts/Layout.astro";
+import Card from "../components/Card.astro";
+---
+
+<Layout>
+  <Navigation />
+  <MaxWidthWrapper className="flex flex-col lg:flex-row h-fit overflow-hidden">
+    <!-- <div class="flex pt-12 h-fit"> -->
+    <header
+      id="frontend-header"
+      class="flex-5/12 pt-12 lg:sticky static lg:pl-0 pl-4 pr-4 h-fit top-14"
+    >
+      <p class="font-bold text-5xl pb-4">Sangyoon Park</p>
+      <div class="flex flex-row overflow-auto">
+        <div class="w-full flex items-center justify-between mb-2 rounded-xl">
+          <div class="flex flex-row items-center gap-4">
+            <div class="w-15 h-15 pl-2" id="3d-container-frontend"></div>
+            <p class="font-bold text-xl">Frontend Engineer</p>
+          </div>
+        </div>
+      </div>
+      <div class="pb-4">
+        <p>I craft the web to bring data and user experiences to life.</p>
+        <!-- <p>I craft the web to bring data and</p>
+          <p>user experiences to life.</p> -->
+      </div>
+    </header>
+    <div class="flex-7/12 flex flex-col gap-4 pt-12 pb-12">
+      <div id="frontend-about" class="flex flex-col gap-4 pb-4">
+        <p class="font-bold text-2xl pl-4 pr-4">About</p>
+        <p class="pl-4 pr-4">
+          기술 활용만이 목적이 아닌, 프로젝트의 비즈니스적 가치를 창출하기
+          위해서 개발을 하며, 모든 프로그램에 있어서 사용자가 최우선으로
+          중요하다는 마음가짐으로 프론트엔드 개발자의 길을 걷고 있습니다. 저는
+          브라우저의 화면에 '화려함' 을 담아내고 보여지는 것 뿐만 아니라 성능과
+          사용성을 가진 멋진 작품을 만들어내는 것을 즐깁니다.
+        </p>
+        <p class="pl-4 pr-4">
+          최근에 저는 나노웨더 기업에서 웹 GIS 프론트엔드 엔지니어로 일을 하고
+          있습니다. 저는 지도의 프론트엔드에서 주로 저는 데이터 시각화 생성 및
+          유지보수에 기여하며, CPU와 GPU의 렌더링 차이를 활용해 다양한
+          사용자들에게 지도 위에서의 직관적인 경험 및 성능을 보장합니다.
+        </p>
+        <p class="pl-4 pr-4">
+          헌신은 제가 20대에 배운 가치이며 제 삶에 있어서 가장 중요한
+          태도입니다. 이는 커뮤니케이션, 문제 해결 능력, 지속적인 습관에 있어
+          필수임을 경험해왔으며 앞으로도 정진하며 나아갈 저의 노하우입니다.
+        </p>
+      </div>
+      <div id="frontend-career" class="flex flex-col gap-4 pb-4">
+        <p class="font-bold text-2xl pl-4 pr-4">Career</p>
+        <Card
+          type="company"
+          name="NanoWeather"
+          career="Web GIS Frontend"
+          date="2024.02 — Current"
+          description="나노웨더에 근무한지 1개월차가 되가는 박상윤입니다."
+          link="http://www.nano-weather.com/?lang=en"
+        />
+        <Card
+          type="company"
+          name="TheCoder (Internship)"
+          career="Web Frontend"
+          date="2023.09 — 2023.11"
+          description="이벤트 부하 감소 모듈 및 주요 기능 구현으로 프로젝트의 초기 서비스 오픈에 기여했습니다."
+          link="https://www.thecoder.co.kr/"
+        />
+      </div>
+      <div id="frontend-activities" class="flex flex-col gap-4 pb-4">
+        <p class="font-bold text-2xl pl-4 pr-4">Activities</p>
+        <Card
+          type="activity"
+          name="Google Developer Students Group TUK (23-24)"
+          date="2023.09 — 2024.06"
+          description="Google Developer Groups on Campus Tech University of Korea"
+          link="https://gdg.community.dev/gdg-on-campus-tech-university-of-korea-siheung-south-korea/"
+        />
+        <Card
+          type="activity"
+          name="University MakeUs Challenge (4th)"
+          date="2023.03 — 2023.09"
+          description="IT club for college students focused on a web/app launch challenge"
+          link="https://umc.makeus.in/"
+        />
+      </div>
+      <div id="frontend-education" class="flex flex-col gap-4 pb-4">
+        <p class="font-bold text-2xl pl-4 pr-4">Education</p>
+        <Card
+          type="education"
+          name="Tech University of Korea"
+          major="software engineering"
+          date="2022.03 — 2024.02"
+          description="Bachelor Degree / software engineering"
+          link="https://www.tukorea.ac.kr/tukorea/index.do"
+        />
+      </div>
+    </div>
+  </MaxWidthWrapper>
+</Layout>
+
+<script src="https://unpkg.com/three@0.153.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.153.0/examples/jsm/loaders/GLTFLoader.js"
+></script>
+
+<script>
+  import * as THREE from "three";
+  import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+  const frontendContainer = document.getElementById("3d-container-frontend");
+  const frontendElement = frontendContainer.parentElement;
+
+  let computer;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, 60 / 60, 0.1, 10000);
+
+  camera.position.set(0, 4.5, 3);
+  camera.lookAt(0, 0, -1.5);
+
+  const hemiLight = new THREE.HemisphereLight();
+  scene.add(hemiLight);
+
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(60, 60);
+  renderer.setClearColor(0x000000, 0);
+  frontendContainer.appendChild(renderer.domElement);
+
+  const loader = new GLTFLoader();
+  loader.load(
+    "/models/retro-computer/computer.glb",
+    (gltf) => {
+      computer = gltf.scene;
+      scene.add(gltf.scene);
+    },
+    (xhr) => {
+      console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+    },
+    (error) => {
+      console.error("An error happened", error);
+    }
+  );
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (computer) {
+      computer.rotation.y += 0.005;
+    }
+    renderer.render(scene, camera);
+  }
+  animate();
+</script>
+
+<script>
+  import { gsap } from "gsap";
+
+  gsap.from(
+    [
+      "#frontend-header",
+      "#frontend-about",
+      "#frontend-career",
+      "#frontend-activities",
+      "#frontend-education"
+    ],
+    {
+      opacity: 0,
+      x: 20 /* 오른쪽에서 시작 */,
+      stagger: 0.5 /* 각 요소 간의 지연 시간 */,
+      duration: 1,
+      ease: "power2.out"
+    }
+  );
+</script>

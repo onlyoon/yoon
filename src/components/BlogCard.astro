@@ -1,0 +1,41 @@
+---
+import "../styles/global.css";
+const { title, pubDate, content, emoji, link } = Astro.props;
+
+// 날짜를 변환하는 함수
+function formatDate(dateString) {
+  const date = new Date(dateString);
+
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+
+  return `${year}년 ${month}월 ${day}일`;
+}
+const formattedDate = formatDate(pubDate);
+---
+
+<a href={link}>
+  <div
+    class="w-full flex flex-row p-4 rounded-2xl hover:bg-zinc-900 transition-colors duration-300 hover:text-white"
+  >
+    <div
+      class="w-8 flex ml-2 mr-6 text-4xl items-center justify-center text-zinc-400"
+    >
+      {emoji}
+    </div>
+    <div class="flex-3/4 flex flex-col">
+      <div class="flex items-center h-full">
+        <span class="text-xl">{title}</span>
+      </div>
+      <div class="text-sm">
+        {content}
+      </div>
+    </div>
+    <div
+      class="flex-1/4 flex items-center justify-end text-zinc-400 text-sm text-right"
+    >
+      {formattedDate}
+    </div>
+  </div>
+</a>

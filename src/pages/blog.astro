@@ -1,0 +1,61 @@
+---
+interface MarkdownPost {
+  default: string[];
+}
+import Navigation from "../components/Navigation.astro";
+import MaxWidthWrapper from "../components/MaxWidthWrapper.astro";
+import Layout from "../layouts/Layout.astro";
+import BlogCard from "../components/BlogCard.astro";
+
+const posts: MarkdownPost[] = Object.values(
+  await import.meta.glob("./blog/*.md", { eager: true })
+);
+---
+
+<Layout>
+  <Navigation />
+  <MaxWidthWrapper className="flex flex-col lg:flex-row h-fit overflow-hidden">
+    <header
+      id="blog-header"
+      class="flex-5/12 pt-12 lg:sticky static lg:pl-0 pl-4 pr-4 h-fit top-14"
+    >
+      <p class="font-bold text-5xl pb-4">Blog</p>
+      <div class="flex flex-row overflow-auto">
+        <div class="w-full flex items-center justify-between mb-2 rounded-xl">
+        </div>
+      </div>
+      <div class="pb-4 pr-16">
+        <p>
+          Obsidian 플랫폼에서 PARA 방법론으로 글을 저장하며 작업하면서 생긴
+          새로운 개념 혹은 오류들을 기록하는 공간입니다.
+        </p>
+      </div>
+    </header>
+    <div class="flex-7/12 flex flex-col gap-4 pt-12 pb-12">
+      <div id="frontend-career" class="flex flex-col gap-4 pb-4">
+        <p class="font-bold text-2xl pl-4 pr-4">Recent Posts</p>
+        <ul class="pb-4">
+          {
+            posts.map((post) => (
+              <li class="pb-4">
+                <a
+                  href={`blog/${post.file.split("/").pop().replace(".md", "")}`}
+                >
+                  <BlogCard
+                    title={post.frontmatter.title}
+                    pubDate={post.frontmatter.pubDate}
+                    content={post.frontmatter.content}
+                    emoji={post.frontmatter.emoji}
+                    img=""
+                    tags=""
+                    link={`blog/${post.file.split("/").pop().replace(".md", "")}`}
+                  />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </MaxWidthWrapper>
+</Layout>

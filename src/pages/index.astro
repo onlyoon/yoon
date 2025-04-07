@@ -1,0 +1,409 @@
+---
+import Navigation from "../components/Navigation.astro";
+import MaxWidthWrapper from "../components/MaxWidthWrapper.astro";
+import Layout from "../layouts/Layout.astro";
+import RotatingText from "../components/RotatingText.astro";
+import Button from "../components/Button.astro";
+import IconButton from "../components/IconButton.astro";
+import MailIconButton from "../components/MailIconButton.astro";
+
+import { avatarFragmentShader } from "../shader/avatar-fragment";
+import { avatarVertexShader } from "../shader/avatar-vertax";
+
+const bio = {
+  english: {
+    hello: "Hello.",
+    description: [
+      "with Devoting interest",
+      "with a lot of curiousity",
+      "with User-centered"
+    ],
+    developer: "a developer",
+    nickname: ["Sangyoon Park", "Yoon"],
+    end: "I'am"
+  },
+  korean: {
+    hello: "안녕하세요.",
+    description: ["목표를 위해 헌신하는", "사용자를 중시하는", "호기심이 많은"],
+    developer: "개발자",
+    nickname: ["박상윤", "윤"],
+    end: "입니다."
+  }
+  // chinese: {
+  //   hello: "您好，",
+  //   description: ["精益求精的", "求知若渴的", "热爱创造的"], // 형용사 형태로 변경 및 "热爱创造的" 추가
+  //   developer: "软件工程师",
+  //   nickname: ["我是", "陆天"],
+  //   end: "。"
+  // }
+};
+---
+
+<Layout>
+  <Navigation />
+  <MaxWidthWrapper>
+    <div class="h-[calc(100%-3.5rem)] flex">
+      <div class="flex-3 flex flex-col">
+        <div class="flex-5 flex flex-col justify-end gap-2 pb-8 text-5xl">
+          <p>안녕하세요.</p>
+          <p>
+            <RotatingText
+              cursor={true}
+              deletingInterval={50}
+              typingInterval={50}
+              emptyPause={1000}
+              pause={1500}
+              eraseMode="erase"
+              items={[
+                "목표를 위해 헌신하는",
+                "사용자를 중시하는",
+                "호기심이 많은"
+              ]}
+            />
+          </p>
+          <p>
+            개발자
+            <RotatingText
+              cursor={true}
+              deletingInterval={50}
+              typingInterval={50}
+              emptyPause={1000}
+              pause={1500}
+              eraseMode="erase"
+              items={["박상윤", "윤"]}
+            />
+            입니다.
+          </p>
+        </div>
+        <div class="flex-3 flex flex-row">
+          <div class="flex-5">
+            <div class="h-14 flex gap-4 items-center justify-start">
+              <IconButton
+                name="github"
+                link="https://github.com/onlyoon"
+                imgStyle="w-7 h-7"
+              />
+              <IconButton
+                src="/imgs/linkedin.svg"
+                link="https://www.linkedin.com/in/sangyoon-park-onlyoon/"
+                imgStyle="w-6 h-6"
+              />
+              <IconButton
+                src="/imgs/twitter.svg"
+                link="https://twitter.com/Parkyoon97"
+                imgStyle="w-6 h-6"
+              />
+              <MailIconButton />
+            </div>
+          </div>
+          <div class="flex-3 flex flex-col">
+            <div class="flex-3">
+              <Button text="About me" link="/about" />
+            </div>
+            <div class="flex-5 flex flex-row justify-between"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flex-5 w-full h-full">
+        <div class="absolute z-50" id="3d-container"></div>
+        <img class="" src="/imgs/blob1.svg" alt="blob1" />
+      </div>
+    </div>
+  </MaxWidthWrapper>
+</Layout>
+
+<script src="https://unpkg.com/three@0.153.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.153.0/examples/jsm/loaders/GLTFLoader.js"
+></script>
+
+<script>
+  import { gsap } from "gsap";
+  import * as THREE from "three";
+  import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+  import { OrbitControls } from "three/examples/jsm/Addons.js";
+  import { EffectComposer } from "three/examples/jsm/Addons.js";
+  import { RenderPass } from "three/examples/jsm/Addons.js";
+  import { GlitchPass } from "three/examples/jsm/Addons.js";
+  import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+  import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+
+  const container = document.getElementById("3d-container");
+  const parentElement = container.parentElement;
+  const parentTotalWidth = parentElement.offsetWidth;
+  const parentTotalHeight = parentElement.offsetHeight;
+  const mouse = new THREE.Vector2();
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    parentTotalHeight / parentTotalHeight,
+    0.1,
+    10000
+  );
+
+  camera.position.set(0, 0, 2);
+  camera.rotation.y = -Math.PI / 2;
+  // camera.lookAt(100, 100, 100);
+
+  const renderer = new THREE.WebGLRenderer();
+
+  renderer.setSize(parentTotalWidth, parentTotalHeight);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.25;
+  controls.enableZoom = false;
+  controls.enableRotate = false;
+  controls.enablePan = false;
+
+  // 포스트 프로세싱 설정 (EffectComposer와 GlitchPass 사용)
+  const composer = new EffectComposer(renderer);
+  const renderPass = new RenderPass(scene, camera);
+  composer.addPass(renderPass);
+
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    0.08, // 강도
+    1, // 반경
+    0.9 // 임계값
+  );
+  composer.addPass(bloomPass);
+
+  // GlitchPass를 확장한 커스텀 클래스
+  class DetectableGlitchPass extends GlitchPass {
+    constructor(dt_size) {
+      super(dt_size);
+      // this.uniforms["distortion_y"].value = 0.0; // Displacement Texture 제거
+      this.isGlitching = false;
+      this.onGlitchStart = null;
+      this.onGlitchEnd = null;
+    }
+
+    render(renderer, writeBuffer, readBuffer, deltaTime) {
+      // GlitchPass의 내부 상태 확인
+      const wasGlitching = this.isGlitching;
+
+      // curF 값이 변경되면 글리치가 발생 중
+      this.isGlitching = this.uniforms["byp"].value < 0.001;
+
+      // 글리치 시작 감지
+      if (!wasGlitching && this.isGlitching) {
+        if (this.onGlitchStart) this.onGlitchStart();
+      }
+
+      // 글리치 종료 감지
+      if (wasGlitching && !this.isGlitching) {
+        if (this.onGlitchEnd) this.onGlitchEnd();
+      }
+
+      // 기본 렌더링 로직 호출
+      super.render(renderer, writeBuffer, readBuffer, deltaTime, true);
+    }
+  }
+  const glitchPass = new DetectableGlitchPass(32);
+
+  // const glitchPass = new GlitchPass(64);
+  glitchPass.goWild = false;
+
+  composer.addPass(glitchPass);
+
+  const outputPass = new OutputPass();
+  composer.addPass(outputPass);
+
+  glitchPass.enabled = true; // 글리치 효과 활성화
+
+  let avatarModel = null;
+  let particleModel = null;
+
+  glitchPass.onGlitchStart = () => {
+    if (avatarModel) avatarModel.visible = false;
+    if (particleModel) {
+      particleModel.visible = true;
+      gsap.fromTo(
+        particleModel.material,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.1 }
+      );
+    }
+  };
+
+  glitchPass.onGlitchEnd = () => {
+    if (avatarModel) {
+      console.log(`glitch over, avatarmodel true!`);
+      avatarModel.visible = true;
+    }
+    if (particleModel) {
+      gsap.to(particleModel.material, { opacity: 0, duration: 1 });
+    }
+  };
+
+  // 10초마다 글리치 효과 트리거
+  setInterval(() => {
+    glitchPass.enabled = true;
+    setTimeout(() => {
+      glitchPass.enabled = false; // 짧은 시간 후 글리치 비활성화
+    }, 1000); // 글리치 지속 시간: 500ms
+  }, 2500); // 글리치 주기: 10초
+
+  function setupModels() {
+    // 처음에는 일반 모델만 보이게 설정
+    if (avatarModel) avatarModel.visible = true;
+    if (particleModel) particleModel.visible = false;
+  }
+
+  function addModel(objectName, modelUrl: string) {
+    return new Promise<THREE.Object3D>((resolve, reject) => {
+      const loader = new GLTFLoader();
+      loader.load(
+        modelUrl,
+        (gltf) => {
+          let targetObject: THREE.Object3D | null = null;
+          gltf.scene.traverse((object) => {
+            if (object.name === "GLTF_SceneRootNode") {
+              targetObject = object;
+              console.log(objectName);
+              // objectName = object;
+              console.log(objectName);
+            }
+          });
+          const finalModel = targetObject || gltf.scene;
+          console.log(finalModel);
+          // scene.add(finalModel);
+          resolve(finalModel);
+        },
+        (xhr) => {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+        },
+        (error) => {
+          console.error("An error happened", error);
+          reject(error);
+        }
+      );
+    });
+  }
+
+  addModel(avatarModel, "/models/avatar/scene.gltf").then((model) => {
+    avatarModel = model;
+    console.log("Model Loaded", avatarModel);
+    scene.add(avatarModel);
+  });
+  addModel(particleModel, "/models/avatar/scene.gltf").then((model) => {
+    particleModel = model;
+    console.log("Particle Model Loaded", particleModel);
+    const particleSystem = convertToParticles(particleModel);
+    particleModel = particleSystem;
+    // particleSystem = particleModel;
+    scene.add(particleModel);
+  });
+
+  function convertToParticles(model) {
+    const allowedParts = [
+      "Object_4",
+      // "Object_6",
+      "Object_8",
+      // "Object_10",
+      // "Object_14",
+      "Object_16",
+      "Object_18"
+    ];
+    let vertices = [];
+
+    model.traverse((child) => {
+      if (child.geometry && allowedParts.includes(child.name)) {
+        const positions = child.geometry.attributes.position.array;
+        console.log(positions);
+
+        for (let i = 0; i < positions.length; i += 3) {
+          vertices.push(
+            new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2])
+          );
+        }
+      }
+    });
+
+    console.log(vertices, `vertices`);
+    return createParticleSystem(vertices);
+  }
+
+  function createCircleTexture(color = "#00ffff", size = 128) {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = size;
+
+    const context = canvas.getContext("2d");
+
+    // 투명한 배경 설정
+    context.clearRect(0, 0, size, size);
+
+    // 원 그리기
+    context.beginPath();
+    context.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+    context.closePath();
+
+    // 채우기 색상 지정
+    context.fillStyle = color;
+
+    // 그리기
+    context.fill();
+
+    // Three.js 텍스처로 변환
+    const texture = new THREE.CanvasTexture(canvas);
+
+    return texture;
+  }
+  // 파티클 시스템 생성 함수 (개선된 버전)
+  function createParticleSystem(vertices) {
+    const geometry = new THREE.BufferGeometry();
+    const positions = [];
+
+    vertices.forEach((v) => {
+      positions.push(v.x, v.y, v.z);
+    });
+
+    geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3)
+    );
+
+    const material = new THREE.PointsMaterial({
+      color: 0x00ffff,
+      size: 0.02,
+      map: createCircleTexture("#00ffff", 128), // 원형 텍스처 적용
+      transparent: true,
+      alphaTest: 0.01,
+      depthWrite: false // 중첩된 점들이 자연스럽게 보이도록 투명도 처리
+    });
+
+    return new THREE.Points(geometry, material);
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    // console.log(`avatarModel`, avatarModel);
+    if (avatarModel && avatarModel.rotation) {
+      const rotationX = (-mouse.y * Math.PI) / 4;
+      const rotationY = (mouse.x * Math.PI) / 4;
+
+      avatarModel.rotation.x += (rotationX - avatarModel.rotation.x) * 0.1;
+      avatarModel.rotation.y += (rotationY - avatarModel.rotation.y) * 0.1;
+    }
+    if (particleModel && particleModel.rotation) {
+      const rotationX = (-mouse.y * Math.PI) / 4;
+      const rotationY = (mouse.x * Math.PI) / 4;
+
+      particleModel.rotation.x += (rotationX - particleModel.rotation.x) * 0.1;
+      particleModel.rotation.y += (rotationY - particleModel.rotation.y) * 0.1;
+    }
+    composer.render(); // 포스트 프로세싱을 사용한 렌더링
+    controls.update();
+  }
+  animate();
+
+  function onMouseMove(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  }
+  document.addEventListener("mousemove", onMouseMove, false);
+</script>

@@ -1,0 +1,27 @@
+h1 {
+  font-size: 32px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size:  20px;
+  font-weight: 600;
+}
+
+img {
+  margin: 0 auto;
+}
+
+blockquote {
+  background-color: #f9f9f9;
+  padding: 4px 20px;
+  border: 2px solid transparent;
+  border-left: solid #000000;
+  border-right: solid #000000;
+  text-align: left;
+}

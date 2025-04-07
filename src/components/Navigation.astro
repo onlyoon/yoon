@@ -1,0 +1,134 @@
+---
+import "../styles/global.css";
+import MaxWidthWrapper from "./MaxWidthWrapper.astro";
+const menuItems = [
+  { name: "Home", path: "/" },
+  { name: "About", path: "/about" },
+  { name: "Project", path: "/project" },
+  { name: "Blog", path: "/blog" },
+  { name: "Note", path: "/note" },
+  { name: "Contact", path: "/contact" }
+];
+---
+
+<nav
+  id="navigation"
+  class="sticky z-[100] h-14 inset-x-0 top-0 w-full border-b bg-white/75 border-gray-200 backdrop-blur-lg transition-all"
+>
+  <button
+    id="mobile-menu__button"
+    class="sm:hidden z-50 fixed right-3 top-2 items-center justify-center w-10 h-10 rounded-full m-0"
+  >
+    <div id="side-button" class="">
+      <svg
+        class="w-5 h-5 text-gray-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </div>
+  </button>
+  <MaxWidthWrapper>
+    <div
+      class="flex h-14 items-center justify-between border-b bg-white border-zinc-200"
+    >
+      <a href="/" class="flex z-40 font-semibold">yoon.dev</a>
+      <div class="h-full flex items-center space-x-4">
+        <!-- 모바일 메뉴 버튼 -->
+        <!-- 데스크톱 메뉴 -->
+        <div class="hidden sm:flex items-center space-x-4">
+          <ul class="flex flex-row gap-6">
+            {
+              menuItems.map((item) => (
+                <li>
+                  <a
+                    href={item.path}
+                    class="text-gray-600 hover:text-blue-500 transition-colors"
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </MaxWidthWrapper>
+</nav>
+
+<!-- 모바일 메뉴 -->
+<div id="mobile-menu" class="sm:hidden absolute top-14 left-0 w-full bg-white">
+  <ul class="flex flex-col items-center gap-4 p-4">
+    {
+      menuItems.map((item) => (
+        <li>
+          <a
+            href={item.path}
+            class="text-gray-600 hover:text-blue-500 transition-colors"
+          >
+            {item.name}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  import { gsap } from "gsap";
+  const mobileMenuButton = document.getElementById(
+    "mobile-menu__button"
+  ) as HTMLButtonElement;
+  const mobileMenu = document.getElementById("mobile-menu") as HTMLDivElement;
+
+  mobileMenuButton.addEventListener("click", () => {
+    console.log("click");
+  });
+
+  // GSAP 애니메이션 설정
+  gsap.set(mobileMenu, { y: "-220px" });
+
+  mobileMenuButton.addEventListener("click", () => {
+    if (mobileMenu.classList.contains("up")) {
+      gsap.to(mobileMenu, {
+        y: "0px",
+        duration: 0.5,
+        ease: "power1.inOut"
+      });
+    } else {
+      gsap.to(mobileMenu, {
+        y: "-220px",
+        duration: 0.5,
+        ease: "power1.inOut",
+        onComplete: () => {
+          mobileMenu.classList.add("up");
+        }
+      });
+    }
+    mobileMenu.classList.toggle("up");
+  });
+
+  // const svgElement = document.getElementById("blobSvg");
+  // const parentElement = svgElement!.parentNode; // SVG 요소의 부모 요소
+
+  // svgElement?.addEventListener("click", () => {
+  //   // SVG 요소의 크기만 커지게 하기
+  //   gsap.to(svgElement, {
+  //     width: "100vw",
+  //     height: "100vh",
+  //     x: "-90vw", // 왼쪽으로 이동 (뷰포트 너비의 절반)
+  //     duration: 1,
+  //     ease: "power1.inOut"
+  //   });
+
+  //   // SVG 요소의 부모 요소에 overflow: hidden 설정하여 넘치는 부분 숨기기
+  //   // parentElement!.style.overflow = "hidden";
+  // });
+</script>

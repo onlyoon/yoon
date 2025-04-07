@@ -1,0 +1,23 @@
+---
+import "../styles/global.css";
+
+const { name, link, src, imgStyle } = Astro.props;
+---
+
+<a href=`${link}` target="_blank" rel="noopener noreferrer">
+  <button
+    class="w-8 h-8 flex items-center justify-center overflow-hidden rounded-3xl text-white"
+  >
+    {
+      name ? (
+        <img
+          class={imgStyle}
+          src={`https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${name}/${name}-original.svg`}
+          alt={name}
+        />
+      ) : (
+        <img src={src} alt={src} class={imgStyle} />
+      )
+    }
+  </button>
+</a>
