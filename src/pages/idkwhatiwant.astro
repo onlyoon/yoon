@@ -40,11 +40,13 @@ const bio = {
   <Navigation />
   <MaxWidthWrapper>
     <div
-      class="h-[calc(100%-3.5rem)] flex flex-col-reverse lg:flex-row lg:pt-16"
+      class="h-[calc(100vh-3.5rem)] md:h-[calc(100%-3.5rem)] min-h-[600px] flex flex-col md:flex-row"
     >
-      <div class="flex-3 flex flex-col lg:pb-0 pb-16">
-        <div class="flex-5 flex flex-col justify-end gap-2 pb-8 text-5xl">
-          <p>안녕하세요.</p>
+      <div class="md:pb-0 pb-8 flex-3 flex flex-col order-2 md:order-1">
+        <div
+          class="flex-5 flex flex-col justify-end gap-2 pt-12 text-5xl min-h-72"
+        >
+          <!-- <p>안녕하세요.</p>
           <p>
             <RotatingText
               cursor={true}
@@ -72,7 +74,7 @@ const bio = {
               items={["박상윤", "윤"]}
             />
             입니다.
-          </p>
+          </p> -->
         </div>
         <div class="flex-3 flex flex-row">
           <div class="flex-5">
@@ -97,35 +99,21 @@ const bio = {
           </div>
           <div class="flex-3 flex flex-col">
             <div class="flex-3">
-              <Button
-                text=""
-                link="/about"
-                className="group px-8 py-3 rounded-full bg-black text-white font-bold text-lg shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl hover:bg-gradient-to-r hover:from-gray-800 hover:to-black focus:outline-none focus:ring-4 focus:ring-pink-300"
-              >
-                <span class="inline-flex">
-                  <span class="group-hover:animate-bounce cta-bounce-1">A</span>
-                  <span class="group-hover:animate-bounce cta-bounce-2">b</span>
-                  <span class="group-hover:animate-bounce cta-bounce-3">o</span>
-                  <span class="group-hover:animate-bounce cta-bounce-4">u</span>
-                  <span class="group-hover:animate-bounce cta-bounce-5">t</span>
-                </span>
-                <span class="inline-flex">
-                  <span class="group-hover:animate-bounce cta-bounce-6">m</span>
-                  <span class="group-hover:animate-bounce cta-bounce-7">e</span>
-                </span>
-              </Button>
+              <Button text="About me" link="/about" />
             </div>
             <div class="flex-5 flex flex-row justify-between"></div>
           </div>
         </div>
       </div>
-      <div class="flex-5 w-full h-full flex justify-center">
-        <div
-          class="max-w-[400px] lg:max-w-none flex pb-16 lg:pt-0 lg:pr-16 lg:pl-16"
-        >
-          <img class="pl-8" src="/imgs/yoon3.png" alt="profile" />
-        </div>
+      <div class="flex-5 w-full order-1 md:order-2">
+        <img
+          class="pl-4 pr-4 aspect-w-1 aspect-h-1"
+          src="/imgs/blob1.svg"
+          alt="blob1"
+        />
       </div>
     </div>
   </MaxWidthWrapper>
 </Layout>
+
+<script></script>

@@ -7,11 +7,11 @@ import Card from "../components/Card.astro";
 
 <Layout>
   <Navigation />
-  <MaxWidthWrapper className="flex flex-col lg:flex-row h-fit overflow-hidden">
+  <MaxWidthWrapper className="flex flex-col lg:flex-row h-fit">
     <!-- <div class="flex pt-12 h-fit"> -->
     <header
       id="frontend-header"
-      class="flex-5/12 pt-12 lg:sticky static lg:pl-0 pl-4 pr-4 h-fit top-14"
+      class="flex-5/12 pt-12 static lg:sticky lg:pl-0 pl-4 pr-4 h-fit top-14"
     >
       <p class="font-bold text-5xl pb-4">Sangyoon Park</p>
       <div class="flex flex-row overflow-auto">
@@ -57,7 +57,7 @@ import Card from "../components/Card.astro";
           name="NanoWeather"
           career="Web GIS Frontend"
           date="2024.02 — Current"
-          description="나노웨더에 근무한지 1개월차가 되가는 박상윤입니다."
+          description="나노웨더에 근무한지 3개월차가 되가는 박상윤입니다."
           link="http://www.nano-weather.com/?lang=en"
         />
         <Card
@@ -101,9 +101,18 @@ import Card from "../components/Card.astro";
   </MaxWidthWrapper>
 </Layout>
 
-<script src="https://unpkg.com/three@0.153.0/build/three.min.js"></script>
+<!-- <script src="https://unpkg.com/three@0.153.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.153.0/examples/jsm/loaders/GLTFLoader.js"
-></script>
+></script> -->
+
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.153.0/build/three.module.js",
+      "three/examples/jsm/": "https://unpkg.com/three@0.153.0/examples/jsm/"
+    }
+  }
+</script>
 
 <script>
   import * as THREE from "three";

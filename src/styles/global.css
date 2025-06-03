@@ -19,4 +19,20 @@
 
 body {
   font-family: 'Pretendard', sans-serif;
+  caret-color: transparent;
 }
+
+@keyframes bounce-once {
+  0%, 100% { transform: translateY(0); animation-timing-function: cubic-bezier(0.8,0,1,1);}
+  50% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0,0,0.2,1);}
+}
+.bounce-once {
+  animation: bounce-once 0.6s both;
+}
+.group:hover .cta-bounce-1 { animation-delay: 0.05s; }
+.group:hover .cta-bounce-2 { animation-delay: 0.10s; }
+.group:hover .cta-bounce-3 { animation-delay: 0.15s; }
+.group:hover .cta-bounce-4 { animation-delay: 0.20s; }
+.group:hover .cta-bounce-5 { animation-delay: 0.25s; }
+.group:hover .cta-bounce-6 { animation-delay: 0.30s; }
+.group:hover .cta-bounce-7 { animation-delay: 0.35s; }

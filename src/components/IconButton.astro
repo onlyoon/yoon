@@ -1,12 +1,19 @@
 ---
 import "../styles/global.css";
 
-const { name, link, src, imgStyle } = Astro.props;
+interface Props {
+  name?: string;
+  link: string;
+  src?: string;
+  imgStyle: string;
+}
+
+const { name, link, src, imgStyle } = Astro.props as Props;
 ---
 
 <a href=`${link}` target="_blank" rel="noopener noreferrer">
   <button
-    class="w-8 h-8 flex items-center justify-center overflow-hidden rounded-3xl text-white"
+    class="w-8 h-8 flex items-center justify-center overflow-hidden rounded-3xl text-white cursor-pointer"
   >
     {
       name ? (

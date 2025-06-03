@@ -23,12 +23,15 @@ type Props = MarkdownLayoutProps<{
   <!-- ... -->
   <body>
     <Navigation />
-    <MaxWidthWrapper className="flex h-fit">
-      <header id="blog-header" class="flex-5/12 pt-12 sticky h-fit top-14">
+    <MaxWidthWrapper className="flex flex-col lg:flex-row h-fit">
+      <header
+        id="blog-header"
+        class="flex-5/12 pt-12 static lg:sticky h-fit top-14"
+      >
         <p class="font-bold text-5xl pb-4">{frontmatter.title}</p>
         <div class="flex flex-row overflow-auto">
           <div class="w-full flex items-center justify-center mb-2">
-            <Graph className="w-full" />
+            <Graph className="w-full h-full min-h-80" />
           </div>
         </div>
         <div class="pb-4 pr-16">
